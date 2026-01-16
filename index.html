@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CV Master - Final Fix</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<div id="loadingOverlay">
+    <div class="spinner"></div>
+    <p>Generating High Quality PDF...</p>
+</div>
+
+<div class="app-container">
+
+    <aside class="dashboard">
+        <div class="logo">
+            <i class="fa-solid fa-file-signature"></i> CV <span class="accent-text">MASTER</span>
+        </div>
+
+        <div class="dash-scroll">
+
+            <div class="control-card">
+                <div class="card-head"><i class="fa-solid fa-layer-group"></i> Layout</div>
+                <div class="card-body">
+                    <div class="btn-group">
+                        <button class="tool-btn active" onclick="setLayout('modern', this)">Modern</button>
+                        <button class="tool-btn" onclick="setLayout('elegant', this)">Elegant</button>
+                        <button class="tool-btn" onclick="setLayout('minimal', this)">Minimal</button>
+                    </div>
+                    
+                    <label class="sub-label" style="margin-top:10px;">Typography</label>
+                    <div class="btn-group">
+                        <button class="tool-btn active" onclick="setFont('poppins', this)">Modern</button>
+                        <button class="tool-btn" onclick="setFont('serif', this)">Classic</button>
+                    </div>
+
+                    <label class="sub-label" style="margin-top:10px;">Frame Style</label>
+                    <div class="border-grid">
+                        <button class="border-btn active" onclick="setBorder('none', this)">None</button>
+                        <button class="border-btn" onclick="setBorder('simple', this)">Line</button>
+                        <button class="border-btn" onclick="setBorder('double', this)">Double</button>
+                        <button class="border-btn" onclick="setBorder('corner', this)">Corner</button>
+                        <button class="border-btn" onclick="setBorder('frame', this)">Frame</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-card">
+                <div class="card-head"><i class="fa-solid fa-palette"></i> Colors</div>
+                <div class="card-body">
+                    <div class="color-options">
+                        <div class="c-dot" style="background: #2c3e50;" onclick="setTheme('#2c3e50', '#34495e')"></div>
+                        <div class="c-dot" style="background: #c0392b;" onclick="setTheme('#c0392b', '#e74c3c')"></div>
+                        <div class="c-dot" style="background: #16a085;" onclick="setTheme('#16a085', '#1abc9c')"></div>
+                        <div class="c-dot" style="background: #8e44ad;" onclick="setTheme('#8e44ad', '#9b59b6')"></div>
+                        <div class="custom-pick">
+                            <input type="color" oninput="setCustomTheme(this.value)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-card highlight-card">
+                <div class="card-head"><i class="fa-solid fa-camera"></i> Photo Studio</div>
+                <div class="card-body">
+                    <label class="upload-wrapper">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload Photo
+                        <input type="file" id="photoInput" hidden accept="image/*">
+                    </label>
+                    
+                    <label class="sub-label">Photo Border Color</label>
+                    <div class="color-options" style="margin-bottom: 15px;">
+                        <div class="c-dot" style="background:#000;" onclick="setPhotoBorderColor('#000')"></div>
+                        <div class="c-dot" style="background:#fff;" onclick="setPhotoBorderColor('#fff')"></div>
+                        <div class="c-dot" style="background:#c0392b;" onclick="setPhotoBorderColor('#c0392b')"></div>
+                        <input type="color" style="width:25px;height:25px;padding:0;border:none;" oninput="setPhotoBorderColor(this.value)">
+                    </div>
+
+                    <div class="slider-row">
+                        <div class="slider-group">
+                            <label>Zoom</label>
+                            <input type="range" min="100" max="300" value="100" oninput="adjustPhoto(this.value, 'zoom')">
+                        </div>
+                        <div class="slider-group">
+                            <label>Roundness</label>
+                            <input type="range" min="0" max="50" value="50" oninput="updatePhotoStyle('radius', this.value)">
+                        </div>
+                    </div>
+                    <div class="slider-row">
+                        <div class="slider-group">
+                            <label>Move X</label>
+                            <input type="range" min="0" max="100" value="50" oninput="adjustPhoto(this.value, 'x')">
+                        </div>
+                        <div class="slider-group">
+                            <label>Move Y</label>
+                            <input type="range" min="0" max="100" value="20" oninput="adjustPhoto(this.value, 'y')">
+                        </div>
+                    </div>
+                    <div class="slider-group" style="margin-top:5px;">
+                        <label>Border Thickness</label>
+                        <input type="range" min="0" max="10" value="5" oninput="updatePhotoStyle('border', this.value)">
+                    </div>
+                </div>
+            </div>
+
+            <div class="control-card">
+                <div class="card-head"><i class="fa-solid fa-user-pen"></i> Info & Details</div>
+                <div class="card-body">
+                    <input type="text" id="nameInput" placeholder="Full Name (Auto-Fits Line)">
+                    <input type="text" id="jobInput" placeholder="Job Title">
+                    <div class="row">
+                        <input type="text" id="fatherInput" placeholder="Father Name">
+                        <input type="text" id="dobInput" placeholder="DOB">
+                    </div>
+                    <input type="text" id="phoneInput" placeholder="Phone">
+                    <input type="text" id="emailInput" placeholder="Email">
+                    <input type="text" id="addrInput" placeholder="Address">
+                    
+                    <hr class="dash-divider">
+                    <label class="sub-label" style="color:#38bdf8;">Skills (Comma separated)</label>
+                    <input type="text" id="skillsInput" placeholder="Java, Sales, Design...">
+
+                    <label class="sub-label">Languages</label>
+                    <input type="text" id="langInput" placeholder="English, Hindi...">
+
+                    <label class="sub-label">Diploma / Course</label>
+                    <textarea id="certInput" rows="2" placeholder="e.g. ADCA, Tally Prime..."></textarea>
+                    
+                    <hr class="dash-divider">
+
+                    <label class="sub-label">Experience</label>
+                    <input type="text" id="compInput" placeholder="Company">
+                    <input type="text" id="roleInput" placeholder="Role">
+                    <div class="row">
+                        <input type="text" id="startInput" placeholder="Start Year">
+                        <input type="text" id="endInput" placeholder="End Year">
+                    </div>
+                    
+                    <div style="position:relative;">
+                        <textarea id="descInput" rows="2" placeholder="Description..."></textarea>
+                        <button class="mini-ai-btn" onclick="generateAI()"><i class="fa-solid fa-robot"></i> AI Write</button>
+                    </div>
+
+                    <label class="sub-label">Education</label>
+                    <input type="text" id="degreeInput" placeholder="Degree">
+                    <input type="text" id="uniInput" placeholder="University">
+                    <input type="text" id="yearInput" placeholder="Year">
+                </div>
+            </div>
+
+            <button class="download-btn" onclick="downloadPDF()">Download High Quality PDF</button>
+
+            <div class="dev-footer">
+                <div class="dev-logo">Developed by <span class="swapan-name">Swapan</span> <i class="fa-solid fa-heart beat-icon"></i></div>
+                <div class="footer-links">
+                    <span onclick="openModal('privacy')">Privacy</span> • 
+                    <span onclick="openModal('about')">About</span>
+                </div>
+            </div>
+
+        </div>
+    </aside>
+
+    <main class="preview-stage">
+        <div class="zoom-bar">
+            <button onclick="zoom(-0.1)"><i class="fa-solid fa-minus"></i></button>
+            <span id="zoomLabel">70%</span>
+            <button onclick="zoom(0.1)"><i class="fa-solid fa-plus"></i></button>
+        </div>
+
+        <div id="previewWrapper" class="preview-container-wrapper">
+            <div class="preview-header"><span>PREVIEW</span></div>
+
+            <div id="resumePaper" class="resume-paper modern">
+                
+                <div id="borderOverlay" class="border-overlay"></div>
+
+                <div id="frameContainer" class="frame-box">
+                    <div class="resume-content">
+                        
+                        <div class="left-col">
+                            <div class="photo-wrapper">
+                                <img src="https://via.placeholder.com/150" id="dispPhoto">
+                            </div>
+
+                            <div class="header-name-inject">
+                                <h1 id="dispNameElegant" class="auto-fit-text">YOUR NAME</h1>
+                                <h2 id="dispJobElegant" class="auto-fit-text">PROFESSIONAL TITLE</h2>
+                            </div>
+                            
+                            <div class="left-pad">
+                                <div class="section-block">
+                                    <h3>Contact</h3>
+                                    <div class="info-item"><i class="fa-solid fa-phone"></i> <span id="dispPhone">+91 ...</span></div>
+                                    <div class="info-item">
+                                        <i class="fa-solid fa-envelope"></i> 
+                                        <span id="dispEmail" class="email-text">email@example.com</span>
+                                    </div>
+                                    <div class="info-item"><i class="fa-solid fa-location-dot"></i> <span id="dispAddr">Address</span></div>
+                                </div>
+
+                                <div class="section-block">
+                                    <h3>Personal</h3>
+                                    <div class="info-item"><strong>Father:</strong> <span id="dispFather">Name</span></div>
+                                    <div class="info-item"><strong>DOB:</strong> <span id="dispDOB">--/--/--</span></div>
+                                </div>
+
+                                <div class="section-block">
+                                    <h3>Skills</h3>
+                                    <div id="dispSkills" class="tags-cloud"></div>
+                                </div>
+
+                                <div class="section-block">
+                                    <h3>Languages</h3>
+                                    <div id="dispLang" class="tags-cloud"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="body-flex-container">
+                            
+                            <div class="sidebar-inject" id="elegantSidebarContent">
+                                <div class="section-block">
+                                    <h3>Contact</h3>
+                                    <div class="info-item"><i class="fa-solid fa-phone"></i> <span id="dispPhoneEl">+91 ...</span></div>
+                                    <div class="info-item">
+                                        <i class="fa-solid fa-envelope"></i> 
+                                        <span id="dispEmailEl" class="email-text">email@example.com</span>
+                                    </div>
+                                    <div class="info-item"><i class="fa-solid fa-location-dot"></i> <span id="dispAddrEl">Address</span></div>
+                                </div>
+                                <div class="section-block">
+                                    <h3>Personal</h3>
+                                    <div class="info-item"><strong>Father:</strong> <span id="dispFatherEl">Name</span></div>
+                                    <div class="info-item"><strong>DOB:</strong> <span id="dispDOBEl">--/--/--</span></div>
+                                </div>
+                                <div class="section-block">
+                                    <h3>Skills</h3>
+                                    <div id="dispSkillsEl" class="tags-cloud"></div>
+                                </div>
+                                <div class="section-block">
+                                    <h3>Languages</h3>
+                                    <div id="dispLangEl" class="tags-cloud"></div>
+                                </div>
+                            </div>
+
+                            <div class="right-col">
+                                <header class="main-header">
+                                    <h1 id="dispName" class="auto-fit-text">YOUR NAME</h1>
+                                    <h2 id="dispJob" class="auto-fit-text">PROFESSIONAL TITLE</h2>
+                                </header>
+
+                                <div class="right-pad">
+                                    <div class="section-main">
+                                        <h3 class="main-title">Profile Summary</h3>
+                                        <p id="dispSummary">Summary...</p>
+                                    </div>
+
+                                    <div class="section-main">
+                                        <h3 class="main-title">Experience</h3>
+                                        <div class="job-card">
+                                            <div class="job-header">
+                                                <strong id="dispComp">Company Name</strong>
+                                                <span class="date-pill"><span id="dispStart">2022</span> - <span id="dispEnd">Present</span></span>
+                                            </div>
+                                            <div class="job-role" id="dispRole">Job Role</div>
+                                            <p id="dispDesc">Responsibilities...</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-main">
+                                        <h3 class="main-title">Education</h3>
+                                        <div class="edu-card">
+                                            <div style="display:flex; justify-content:space-between; font-weight:bold;">
+                                                <span id="dispDegree">Degree Name</span>
+                                                <span id="dispYear">2024</span>
+                                            </div>
+                                            <div id="dispUni">University Name</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-main">
+                                        <h3 class="main-title">Diploma & Certifications</h3>
+                                        <p id="dispCert">Details here...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="toast-container"></div>
+    <div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <h2 id="modalTitle">Title</h2>
+            <div id="modalContent" class="modal-content"></div>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
